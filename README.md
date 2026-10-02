@@ -3,6 +3,8 @@
 어떤 고객에게 먼저 투자해야 할까? 브라질 온라인 쇼핑몰 Olist의 주문 데이터(2016.9 ~ 2018.10)를 SQL과 Python으로 분석한 프로젝트입니다.
 
 ## 화면
+발표 자료: [PDF로 보기](olist_분석_포트폴리오.pdf) / [PPT 파일](olist_분석_포트폴리오.pptx)
+
 ![대시보드](images/dashboard.png)
 
 | | | |
@@ -23,7 +25,8 @@
 | `analysis/run_analysis.py` | CSV를 SQLite에 넣고 SQL을 실행한 뒤 Python으로 계산, 결과를 `analysis/output/`에 저장 |
 | `analysis/olist_analysis.ipynb` | 분석 과정과 결과를 한 번에 보는 노트북 |
 | `analysis/build_dashboard.py`, `analysis/dashboard_template.html` | 결과를 담은 대시보드 생성 |
-| `olist_dashboard.html` | 완성된 대시보드 (브라우저에서 바로 열림) |
+| `olist_dashboard.html` | 완성된 대시보드 (내려받아 브라우저에서 열면 동작) |
+| `olist_분석_포트폴리오.pptx`, `.pdf` | 발표 자료 9장 |
 | `analysis/build_deck.py` | 발표 자료(PPT) 생성 |
 
 ## 실행 방법

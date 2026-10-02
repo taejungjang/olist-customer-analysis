@@ -2,7 +2,7 @@
 olist_dataset/
 analysis/output/
 *.twbx
-*.pptx
+~$*
 __pycache__/
 .ipynb_checkpoints/
 portfolio/
