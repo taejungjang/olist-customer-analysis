@@ -1,0 +1,6 @@
+pandas
+scipy
+python-pptx
+nbformat
+nbclient
+ipykernel

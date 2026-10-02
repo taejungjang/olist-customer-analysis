@@ -1,0 +1,8 @@
+# 원본 데이터와 생성 결과는 올리지 않음 (README의 실행 방법으로 다시 만들 수 있음)
+olist_dataset/
+analysis/output/
+*.twbx
+*.pptx
+__pycache__/
+.ipynb_checkpoints/
+portfolio/

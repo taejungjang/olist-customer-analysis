@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Olist 고객 그룹 대시보드</title>
+<style>
+  :root {
+    --bg: #f4f7f5; --card: #ffffff; --ink: #1f2d29; --mute: #5e7069; --line: #e3e8e6;
+    --green: #0b3d2e; --teal: #2a9d8f; --red: #d9534f; --gray: #b4bfbb; --dgray: #7b8f89; --tint: #f0f4f2;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif; line-height: 1.5; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 24px 16px 40px; }
+  h1 { margin: 0; font-size: 26px; color: var(--green); }
+  .sub { margin: 4px 0 20px; color: var(--mute); font-size: 14px; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .kpi { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .kpi .v { font-size: 28px; font-weight: 700; color: var(--green); }
+  .kpi .v.red { color: var(--red); }
+  .kpi .l { font-size: 13px; color: var(--mute); }
+  .grid { display: grid; gap: 16px; margin-bottom: 16px; }
+  .g2 { grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); }
+  @media (max-width: 520px) { .g2 { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; min-width: 0; }
+  .card h2 { margin: 0 0 2px; font-size: 16px; color: var(--green); }
+  .card .hint { margin: 0 0 10px; font-size: 12.5px; color: var(--mute); }
+  svg { width: 100%; height: auto; display: block; }
+  svg text { font-family: inherit; }
+  .tabs { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin-bottom: 8px; }
+  .tabs button { border: 0; background: #fff; padding: 6px 14px; font: inherit; font-size: 13px; cursor: pointer; color: var(--mute); }
+  .tabs button.on { background: var(--green); color: #fff; }
+  .legend { display: grid; gap: 4px; margin-top: 8px; }
+  .legend button { display: flex; align-items: center; gap: 8px; border: 1px solid transparent; background: none; font: inherit; font-size: 13px; padding: 4px 8px; border-radius: 6px; cursor: pointer; text-align: left; color: var(--ink); }
+  .legend button.on { border-color: var(--red); background: #fdf3f2; }
+  .legend i { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+  .legend span.n { margin-left: auto; color: var(--mute); }
+  .ctrl { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin: 6px 0 14px; }
+  .ctrl label { font-size: 13px; color: var(--mute); display: flex; justify-content: space-between; }
+  .ctrl b { color: var(--ink); }
+  input[type=range] { width: 100%; accent-color: var(--teal); }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { white-space: nowrap; }
+  th { text-align: right; background: var(--green); color: #fff; padding: 8px 10px; font-weight: 600; }
+  th:first-child, td:first-child { text-align: left; }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: right; }
+  tr.focus td { background: #fdf3f2; }
+  tr.top td { outline: 0; }
+  .tag { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+  .tag.go { background: #e3f3f0; color: #1b6f64; }
+  .tag.no { background: #fbe4e3; color: #b23b37; }
+  .pos { color: #1b6f64; font-weight: 600; } .neg { color: #b23b37; font-weight: 600; }
+  .scroll { overflow-x: auto; }
+  .sum { margin-top: 10px; font-size: 14px; }
+  .sum b { color: var(--green); }
+  .note { font-size: 12px; color: var(--mute); margin-top: 8px; }
+  footer { font-size: 12px; color: var(--mute); margin-top: 8px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Olist 고객 그룹 대시보드</h1>
+  <p class="sub">어떤 고객에게 먼저 투자해야 할까? 브라질 온라인 쇼핑몰 Olist 주문 데이터 (2016.9 ~ 2018.10, 배송 완료 주문 기준)</p>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h2>월별 주문 수</h2>
+      <p class="hint">2018년부터 월 6천 ~ 7천 건에서 늘지 않음 (진한 색: 2018년)</p>
+      <svg id="monthly" viewBox="0 0 560 280" role="img" aria-label="월별 주문 수 막대 그래프"></svg>
+    </div>
+    <div class="card">
+      <h2>고객 그룹 구성</h2>
+      <p class="hint">그룹을 누르면 아래 표에서 같은 그룹이 강조됨</p>
+      <div class="tabs" id="pieTabs"><button data-m="cust" class="on">고객 수</button><button data-m="sales">매출</button></div>
+      <div style="display:grid;grid-template-columns:minmax(150px,200px) 1fr;gap:12px;align-items:center">
+        <svg id="pie" viewBox="0 0 200 200" role="img" aria-label="고객 그룹 구성 원그래프"></svg>
+        <div class="legend" id="legend"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <h2>그룹별 연락 시뮬레이터</h2>
+    <p class="hint">연락하면 몇 %가 다시 사는지, 연락 1명당 비용이 얼마인지 바꿔보면 어느 그룹이 남는지 볼 수 있음</p>
+    <div class="ctrl">
+      <div><label>연락으로 추가로 다시 사는 비율 <b id="rateV"></b></label><input id="rate" type="range" min="0.5" max="10" step="0.5" value="3"></div>
+      <div><label>연락 1명당 비용 (R$) <b id="costV"></b></label><input id="cost" type="range" min="0" max="10" step="0.1" value="2"></div>
+    </div>
+    <div class="scroll"><table id="sim"></table></div>
+    <div class="sum" id="simSum"></div>
+    <p class="note">추가 매출 = 고객 수 x 추가 재구매 비율 x 평균 금액, 순효과 = 추가 매출 - 연락 비용. 비율은 가정이며 비율을 바꿔도 우수 그룹이 일반 그룹보다 먼저임</p>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h2>휴면 우수 고객 중 누구부터</h2>
+      <p class="hint">첫 구매 후 기간별, 아직 안 산 고객이 다음 90일 안에 다시 산 비율 (%)</p>
+      <svg id="hazard" viewBox="0 0 560 250" role="img" aria-label="기간별 재구매 비율"></svg>
+      <p class="note" id="hazNote"></p>
+    </div>
+    <div class="card">
+      <h2>무엇을 권할까</h2>
+      <p class="hint">다시 산 고객의 구매 방식 (%)</p>
+      <div class="two">
+        <div><svg id="cat" viewBox="0 0 240 230" role="img" aria-label="같은 상품군 재구매 비율"></svg></div>
+        <div><svg id="vou" viewBox="0 0 240 230" role="img" aria-label="바우처 사용별 재구매 비율"></svg></div>
+      </div>
+      <p class="note">연관성이며 효과를 증명한 것은 아님. A/B 테스트로 확인 필요</p>
+    </div>
+  </div>
+  <footer>데이터: Kaggle Olist Brazilian E-Commerce. 고객은 같은 사람을 1명으로 셈, 재구매는 서로 다른 날 2번 이상 구매. 우수는 총 구매금액 R$110 이상(상위 40%), 휴면은 마지막 구매 후 6개월 넘게 구매 없음.</footer>
+</div>
+
+<script>
+const D = __DATA__;
+const C = { green: "#0b3d2e", teal: "#2a9d8f", red: "#d9534f", gray: "#b4bfbb", dgray: "#7b8f89" };
+const GCOL = { 1: "#7b8f89", 2: "#9aaaa5", 3: "#c3ccc9", 4: "#d9534f", 5: "#e3e8e6" };
+const fmt = n => Math.round(n).toLocaleString("ko-KR");
+let focus = 4, pieMode = "cust";
+
+/* ---------- KPI ---------- */
+const g = D.groups, g4 = g.find(x => x.grp === 4);
+document.getElementById("kpis").innerHTML = [
+  [fmt(D.customers) + "명", "분석 고객 (같은 사람은 1명)", ""],
+  [(D.repeat / D.customers * 100).toFixed(1) + "%", "서로 다른 날 다시 산 고객", ""],
+  [fmt(g4.customers) + "명", "휴면 우수 고객", "red"],
+  [g4.sales_share.toFixed(0) + "%", "휴면 우수 고객이 낸 매출 비중", "red"]
+].map(k => `<div class="kpi"><div class="v ${k[2]}">${k[0]}</div><div class="l">${k[1]}</div></div>`).join("");
+
+/* ---------- 막대 그래프 ---------- */
+function bars(id, items, o) {
+  const W = o.w || 560, H = o.h || 280, pl = o.pl || 40, pb = o.pb || 42, pt = 24, pr = 8;
+  const max = o.max || Math.max(...items.map(i => i.v)) * 1.15;
+  const bw = (W - pl - pr) / items.length, plotH = H - pb - pt;
+  let s = "";
+  if (o.grid) for (let i = 0; i <= 4; i++) {
+    const y = pt + plotH * (1 - i / 4), val = max * i / 4;
+    s += `<line x1="${pl}" x2="${W - pr}" y1="${y}" y2="${y}" stroke="#e3e8e6"/><text x="${pl - 6}" y="${y + 4}" text-anchor="end" font-size="11" fill="#5e7069">${o.axisFmt ? o.axisFmt(val) : fmt(val)}</text>`;
+  }
+  s += `<line x1="${pl}" x2="${W - pr}" y1="${pt + plotH}" y2="${pt + plotH}" stroke="#c9d5d0"/>`;
+  items.forEach((it, i) => {
+    const h = plotH * it.v / max, x = pl + i * bw + bw * 0.14, w = bw * 0.72, y = pt + plotH - h;
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="${it.c}"/>`;
+    if (o.labels) s += `<text x="${x + w / 2}" y="${y - 5}" text-anchor="middle" font-size="${o.lf || 12}" fill="#1f2d29">${o.labelFmt ? o.labelFmt(it.v) : it.v}</text>`;
+    const lab = it.l.split("\n");
+    lab.forEach((t, k) => s += `<text x="${x + w / 2}" y="${H - pb + 16 + k * 14}" text-anchor="middle" font-size="${o.xf || 11}" fill="#3c4a46" ${o.rot ? `transform="rotate(-50 ${x + w / 2} ${H - pb + 14})" text-anchor="end"` : ""}>${t}</text>`);
+  });
+  if (o.box) { const [a, b] = o.box; s += `<rect x="${pl + a * bw + 2}" y="${pt - 6}" width="${(b - a) * bw - 4}" height="${plotH + pb - 8}" fill="none" stroke="${C.red}" stroke-width="2.2" rx="3"/>`; }
+  document.getElementById(id).innerHTML = s;
+}
+bars("monthly", D.monthly.map((m, i) => ({ l: m.m.slice(2, 4) + "." + parseInt(m.m.slice(5)), v: m.orders, c: i < 12 ? C.teal : C.green })), { grid: true, max: 8000, xf: 9.5, h: 280, pb: 46, rot: true });
+
+/* ---------- 원그래프 ---------- */
+function pie() {
+  const key = pieMode === "cust" ? "cust_share" : "sales_share";
+  let a0 = -Math.PI / 2, s = "";
+  g.forEach(x => {
+    const a1 = a0 + x[key] / 100 * 2 * Math.PI, R = 92, r = 52, cx = 100, cy = 100;
+    const p = (a, rad) => [cx + rad * Math.cos(a), cy + rad * Math.sin(a)];
+    const [x0, y0] = p(a0, R), [x1, y1] = p(a1, R), [x2, y2] = p(a1, r), [x3, y3] = p(a0, r), big = a1 - a0 > Math.PI ? 1 : 0;
+    s += `<path d="M${x0} ${y0} A${R} ${R} 0 ${big} 1 ${x1} ${y1} L${x2} ${y2} A${r} ${r} 0 ${big} 0 ${x3} ${y3} Z" fill="${GCOL[x.grp]}" stroke="#fff" stroke-width="1.5" style="cursor:pointer;${x.grp === focus ? "" : "opacity:.85"}" data-g="${x.grp}"/>`;
+    a0 = a1;
+  });
+  const f = g.find(x => x.grp === focus);
+  s += `<text x="100" y="97" text-anchor="middle" font-size="22" font-weight="700" fill="${focus === 4 ? C.red : C.green}">${f[key].toFixed(0)}%</text><text x="100" y="115" text-anchor="middle" font-size="11" fill="#5e7069">${f.name}</text>`;
+  const el = document.getElementById("pie"); el.innerHTML = s;
+  el.querySelectorAll("path").forEach(p => p.onclick = () => { focus = +p.dataset.g; render(); });
+  document.getElementById("legend").innerHTML = g.map(x => `<button class="${x.grp === focus ? "on" : ""}" data-g="${x.grp}"><i style="background:${GCOL[x.grp]}"></i>${x.grp} ${x.name}<span class="n">${x[key].toFixed(1)}%</span></button>`).join("");
+  document.querySelectorAll("#legend button").forEach(b => b.onclick = () => { focus = +b.dataset.g; render(); });
+}
+document.querySelectorAll("#pieTabs button").forEach(b => b.onclick = () => {
+  pieMode = b.dataset.m; document.querySelectorAll("#pieTabs button").forEach(x => x.classList.toggle("on", x === b)); render();
+});
+
+/* ---------- 시뮬레이터 ---------- */
+function sim() {
+  const rate = +document.getElementById("rate").value / 100, cost = +document.getElementById("cost").value;
+  document.getElementById("rateV").textContent = (rate * 100).toFixed(1) + "%";
+  document.getElementById("costV").textContent = "R$ " + cost.toFixed(1);
+  const order = [4, 2, 1, 3, 5];
+  const rows = order.map(k => {
+    const x = g.find(z => z.grp === k), add = x.customers * rate * x.avg_amount, spend = x.customers * cost, net = add - spend;
+    return { x, add, spend, net, per: rate * x.avg_amount };
+  });
+  let h = `<tr><th>그룹</th><th>고객 수(명)</th><th>평균 금액(R$)</th><th>연락 1명당 기대 매출(R$)</th><th>추가 매출(R$)</th><th>연락 비용(R$)</th><th>순효과(R$)</th><th>판단</th></tr>`;
+  rows.forEach(r => h += `<tr class="${r.x.grp === focus ? "focus" : ""}"><td>${r.x.grp} ${r.x.name}</td><td>${fmt(r.x.customers)}</td><td>${fmt(r.x.avg_amount)}</td><td>${r.per.toFixed(1)}</td><td>${fmt(r.add)}</td><td>${fmt(r.spend)}</td><td class="${r.net >= 0 ? "pos" : "neg"}">${r.net >= 0 ? "" : "-"}${fmt(Math.abs(r.net))}</td><td><span class="tag ${r.net >= 0 ? "go" : "no"}">${r.net >= 0 ? "연락" : "제외"}</span></td></tr>`);
+  document.getElementById("sim").innerHTML = h;
+  const go = rows.filter(r => r.net > 0), tot = go.reduce((a, r) => a + r.net, 0), addT = go.reduce((a, r) => a + r.add, 0);
+  document.getElementById("simSum").innerHTML = go.length
+    ? `연락하는 그룹(${go.map(r => r.x.name).join(", ")})의 순효과 합계 <b>R$ ${fmt(tot)}</b>, 추가 매출 R$ ${fmt(addT)} (전체 매출 R$ ${fmt(D.total_sales)}의 ${(addT / D.total_sales * 100).toFixed(1)}%)`
+    : "이 조건에서는 연락해서 남는 그룹이 없음";
+}
+document.getElementById("rate").oninput = sim; document.getElementById("cost").oninput = sim;
+
+/* ---------- 나머지 그래프 ---------- */
+const hz = D.hazard;
+bars("hazard", hz.map((h, i) => ({ l: ["0~90일", "91~180일", "181~270일", "271~360일", "361~450일"][i], v: h.rate_pct, c: i === 2 || i === 3 ? C.teal : (i === 4 ? C.dgray : C.gray) })), { max: 1.6, labels: true, labelFmt: v => v.toFixed(2), pl: 12, h: 250, box: [2, 4], axisFmt: v => v });
+document.getElementById("hazNote").textContent = `6~12개월 구간은 연락 없이도 90일마다 약 ${Math.min(hz[2].rate_pct, hz[3].rate_pct).toFixed(1)}~${Math.max(hz[2].rate_pct, hz[3].rate_pct).toFixed(1)}%가 돌아오고, 12개월이 지나면 ${hz[4].rate_pct.toFixed(1)}%로 낮아짐. 휴면 우수 ${fmt(D.targets.dormant_all)}명 중 6~12개월 ${fmt(D.targets.target_6_12m)}명이 먼저 연락 대상`;
+bars("cat", [{ l: "첫 구매와\n같은 상품군", v: D.samecat.same, c: C.teal }, { l: "무작위로\n골랐다면", v: D.samecat.chance, c: C.gray }], { max: 48, labels: true, labelFmt: v => v.toFixed(1), w: 240, pl: 8, h: 230, lf: 14, xf: 12 });
+bars("vou", [{ l: "바우처\n사용", v: D.voucher.with, c: C.teal }, { l: "사용\n안 함", v: D.voucher.without, c: C.gray }], { max: 3.6, labels: true, labelFmt: v => v.toFixed(2), w: 240, pl: 8, h: 230, lf: 14, xf: 12 });
+
+function render() { pie(); sim(); }
+render();
+</script>
+</body>
+</html>
