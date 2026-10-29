@@ -79,6 +79,7 @@
         <svg id="pie" viewBox="0 0 200 200" role="img" aria-label="고객 그룹 구성 원그래프"></svg>
         <div class="legend" id="legend"></div>
       </div>
+      <p class="note">그룹 기준: R(최근/휴면) 마지막 구매 177일(약 6개월) 이내 여부, M(우수/일반) 총 구매금액 R$110 이상 여부(상위 40%), F 서로 다른 날 2번 이상 구매하면 재구매 고객</p>
     </div>
   </div>
 
@@ -96,8 +97,8 @@
 
   <div class="grid g2">
     <div class="card">
-      <h2>휴면 우수 고객 중 누구부터</h2>
-      <p class="hint">첫 구매 후 기간별, 아직 안 산 고객이 다음 90일 안에 다시 산 비율 (%)</p>
+      <h2>휴면 우수 고객 중 언제 연락할까</h2>
+      <p class="hint">연락 없이 다시 산 비율: 첫 구매 후 기간별, 아직 안 산 고객이 그 뒤 90일 안에 다시 산 비율 (%)</p>
       <svg id="hazard" viewBox="0 0 560 250" role="img" aria-label="기간별 재구매 비율"></svg>
       <p class="note" id="hazNote"></p>
     </div>
@@ -198,8 +199,8 @@ document.getElementById("rate").oninput = sim; document.getElementById("cost").o
 /* ---------- 나머지 그래프 ---------- */
 const hz = D.hazard;
 bars("hazard", hz.map((h, i) => ({ l: ["0~90일", "91~180일", "181~270일", "271~360일", "361~450일"][i], v: h.rate_pct, c: i === 2 || i === 3 ? C.teal : (i === 4 ? C.dgray : C.gray) })), { max: 1.6, labels: true, labelFmt: v => v.toFixed(2), pl: 12, h: 250, box: [2, 4], axisFmt: v => v });
-document.getElementById("hazNote").textContent = `6~12개월 구간은 연락 없이도 90일마다 약 ${Math.min(hz[2].rate_pct, hz[3].rate_pct).toFixed(1)}~${Math.max(hz[2].rate_pct, hz[3].rate_pct).toFixed(1)}%가 돌아오고, 12개월이 지나면 ${hz[4].rate_pct.toFixed(1)}%로 낮아짐. 휴면 우수 ${fmt(D.targets.dormant_all)}명 중 6~12개월 ${fmt(D.targets.target_6_12m)}명이 먼저 연락 대상`;
-bars("cat", [{ l: "첫 구매와\n같은 상품군", v: D.samecat.same, c: C.teal }, { l: "무작위로\n골랐다면", v: D.samecat.chance, c: C.gray }], { max: 48, labels: true, labelFmt: v => v.toFixed(1), w: 240, pl: 8, h: 230, lf: 14, xf: 12 });
+document.getElementById("hazNote").textContent = `시간이 지날수록 연락 없이 돌아오는 비율이 낮아짐 (6개월 이후 약 ${Math.min(hz[2].rate_pct, hz[3].rate_pct).toFixed(1)}~${Math.max(hz[2].rate_pct, hz[3].rate_pct).toFixed(1)}%, 12개월 이후 ${hz[4].rate_pct.toFixed(1)}%). 휴면 우수 ${fmt(D.targets.dormant_all)}명 중 아직 돌아올 가능성이 남은 6~12개월 ${fmt(D.targets.target_6_12m)}명을 먼저 연락. 연락 효과가 아니라 연락 없이 돌아오는 정도임`;
+bars("cat", [{ l: "첫 구매와\n같은 상품군", v: D.samecat.same, c: C.teal }, { l: "다른\n상품군", v: 100 - D.samecat.same, c: C.gray }], { max: 75, labels: true, labelFmt: v => v.toFixed(1), w: 240, pl: 8, h: 230, lf: 14, xf: 12 });
 bars("vou", [{ l: "바우처\n사용", v: D.voucher.with, c: C.teal }, { l: "사용\n안 함", v: D.voucher.without, c: C.gray }], { max: 3.6, labels: true, labelFmt: v => v.toFixed(2), w: 240, pl: 8, h: 230, lf: 14, xf: 12 });
 
 function render() { pie(); sim(); }

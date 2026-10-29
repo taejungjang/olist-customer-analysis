@@ -1,6 +1,6 @@
 pandas
 scipy
-python-pptx
+scikit-learn
 nbformat
 nbclient
 ipykernel
