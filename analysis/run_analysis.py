@@ -110,21 +110,21 @@ def run_sql_file(file_name):
 
 
 # 분석 대상 주문만 모아 둔 뷰(v_orders) 만들기: 배송 완료 주문 + 고객 번호 + 배송 정보
-connection.executescript(read_sql_file("00_base_views.sql"))
+connection.executescript(read_sql_file("01_base_view.sql"))
 
 
 # ------------------------------------------------------------------
 # 2. 현황: 월별 주문 수
 # ------------------------------------------------------------------
-monthly_orders = run_sql_file("06_monthly.sql")
+monthly_orders = run_sql_file("03_monthly_orders.sql")
 monthly_orders.to_csv(OUTPUT_DIR / "monthly.csv", index=False)
 
 
 # ------------------------------------------------------------------
 # 3. 고객을 RFM 기준 5개 그룹으로 나누기
-#    (그룹을 나누는 규칙은 sql/01_rfm_groups.sql 에 있음)
+#    (그룹을 나누는 규칙은 sql/02_rfm_groups.sql 에 있음)
 # ------------------------------------------------------------------
-rfm = run_sql_file("01_rfm_groups.sql")
+rfm = run_sql_file("02_rfm_groups.sql")
 rfm.to_csv(OUTPUT_DIR / "rfm.csv", index=False)
 
 # 그룹별 고객 수, 매출 합계, 평균 구매금액, 마지막 구매 후 평균 일수
@@ -179,7 +179,7 @@ print(group2_vs_4)
 # ------------------------------------------------------------------
 # 5. 재구매 고객은 첫 구매 후 며칠 만에 다시 샀나
 # ------------------------------------------------------------------
-repurchase_gap = run_sql_file("08_repurchase_gap.sql")   # 고객별 (첫 구매 ~ 두 번째 구매일) 간격
+repurchase_gap = run_sql_file("04_repurchase_gap.sql")   # 고객별 (첫 구매 ~ 두 번째 구매일) 간격
 repurchase_gap.to_csv(OUTPUT_DIR / "repurchase_gap.csv", index=False)
 print(f"서로 다른 날 2번 이상 산 고객: {len(repurchase_gap):,}명")
 
@@ -188,7 +188,7 @@ print(f"서로 다른 날 2번 이상 산 고객: {len(repurchase_gap):,}명")
 # 6. 다시 살 때 같은 상품군을 샀나
 # ------------------------------------------------------------------
 # 6-1. 고객별 첫 구매 주문과 두 번째 구매 주문 찾기
-order_main_category = run_sql_file("09_order_main_category.sql")   # 주문별 대표 상품군(가장 비싼 상품)
+order_main_category = run_sql_file("05_order_main_category.sql")   # 주문별 대표 상품군(가장 비싼 상품)
 
 orders = pd.read_sql_query(
     "SELECT customer_unique_id, order_id, purchase_ts FROM v_orders",
