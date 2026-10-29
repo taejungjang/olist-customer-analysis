@@ -1,6 +1,3 @@
 pandas
-scipy
+numpy
 scikit-learn
-nbformat
-nbclient
-ipykernel

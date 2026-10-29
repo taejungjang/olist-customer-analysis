@@ -103,20 +103,20 @@
       <p class="note" id="hazNote"></p>
     </div>
     <div class="card">
-      <h2>무엇을 권할까</h2>
-      <p class="hint">다시 산 고객의 구매 방식 (%)</p>
+      <h2>무엇을 추천할까: 첫 구매 상품군에 따라 다름</h2>
+      <p class="hint">첫 구매 상품군별, 다시 샀을 때 같은 상품군을 산 비율 (%). 왼쪽: 높은 상품군 4개 / 오른쪽: 낮은 상품군 4개</p>
       <div class="two">
-        <div><svg id="cat" viewBox="0 0 240 230" role="img" aria-label="같은 상품군 재구매 비율"></svg></div>
-        <div><svg id="vou" viewBox="0 0 240 230" role="img" aria-label="바우처 사용별 재구매 비율"></svg></div>
+        <div><svg id="cat" viewBox="0 0 240 230" role="img" aria-label="같은 상품군 재구매 비율이 높은 첫 구매 상품군"></svg></div>
+        <div><svg id="vou" viewBox="0 0 240 230" role="img" aria-label="같은 상품군 재구매 비율이 낮은 첫 구매 상품군"></svg></div>
       </div>
-      <p class="note">연관성이며 효과를 증명한 것은 아님. A/B 테스트로 확인 필요</p>
+      <p class="note" id="recNote"></p>
     </div>
   </div>
   <footer>데이터: Kaggle Olist Brazilian E-Commerce. 고객은 같은 사람을 1명으로 셈, 재구매는 서로 다른 날 2번 이상 구매. 우수는 총 구매금액 R$110 이상(상위 40%), 휴면은 마지막 구매 후 6개월 넘게 구매 없음.</footer>
 </div>
 
 <script>
-const D = {"customers": 93350, "repeat": 2015, "total_sales": 13220249, "groups": [{"grp": 1, "name": "재구매", "customers": 2015, "cust_share": 2.2, "sales_share": 4.1, "avg_amount": 271.0}, {"grp": 2, "name": "최근 우수", "customers": 14562, "cust_share": 15.6, "sales_share": 29.5, "avg_amount": 267.0}, {"grp": 3, "name": "최근 일반", "customers": 21717, "cust_share": 23.3, "sales_share": 9.1, "avg_amount": 56.0}, {"grp": 4, "name": "휴면 우수", "customers": 21198, "cust_share": 22.7, "sales_share": 43.0, "avg_amount": 268.0}, {"grp": 5, "name": "휴면 일반", "customers": 33858, "cust_share": 36.3, "sales_share": 14.3, "avg_amount": 56.0}], "monthly": [{"m": "2017-01", "orders": 797}, {"m": "2017-02", "orders": 1763}, {"m": "2017-03", "orders": 2649}, {"m": "2017-04", "orders": 2386}, {"m": "2017-05", "orders": 3671}, {"m": "2017-06", "orders": 3229}, {"m": "2017-07", "orders": 3998}, {"m": "2017-08", "orders": 4304}, {"m": "2017-09", "orders": 4265}, {"m": "2017-10", "orders": 4605}, {"m": "2017-11", "orders": 7507}, {"m": "2017-12", "orders": 5662}, {"m": "2018-01", "orders": 7235}, {"m": "2018-02", "orders": 6655}, {"m": "2018-03", "orders": 7185}, {"m": "2018-04", "orders": 6924}, {"m": "2018-05", "orders": 6849}, {"m": "2018-06", "orders": 6149}, {"m": "2018-07", "orders": 6251}, {"m": "2018-08", "orders": 6428}], "hazard": [{"from_day": 0, "rate_pct": 1.29}, {"from_day": 90, "rate_pct": 0.67}, {"from_day": 180, "rate_pct": 0.71}, {"from_day": 270, "rate_pct": 0.58}, {"from_day": 365, "rate_pct": 0.37}], "targets": {"dormant_all": 21198, "target_6_12m": 14237}, "samecat": {"same": 38.9, "chance": 5.8}, "voucher": {"with": 2.89, "without": 2.13}};
+const D = {"customers": 93350, "repeat": 2015, "total_sales": 13220249, "groups": [{"grp": 1, "name": "재구매", "customers": 2015, "cust_share": 2.2, "sales_share": 4.1, "avg_amount": 271.0}, {"grp": 2, "name": "최근 우수", "customers": 14562, "cust_share": 15.6, "sales_share": 29.5, "avg_amount": 267.0}, {"grp": 3, "name": "최근 일반", "customers": 21717, "cust_share": 23.3, "sales_share": 9.1, "avg_amount": 56.0}, {"grp": 4, "name": "휴면 우수", "customers": 21198, "cust_share": 22.7, "sales_share": 43.0, "avg_amount": 268.0}, {"grp": 5, "name": "휴면 일반", "customers": 33858, "cust_share": 36.3, "sales_share": 14.3, "avg_amount": 56.0}], "monthly": [{"m": "2017-01", "orders": 797}, {"m": "2017-02", "orders": 1763}, {"m": "2017-03", "orders": 2649}, {"m": "2017-04", "orders": 2386}, {"m": "2017-05", "orders": 3671}, {"m": "2017-06", "orders": 3229}, {"m": "2017-07", "orders": 3998}, {"m": "2017-08", "orders": 4304}, {"m": "2017-09", "orders": 4265}, {"m": "2017-10", "orders": 4605}, {"m": "2017-11", "orders": 7507}, {"m": "2017-12", "orders": 5662}, {"m": "2018-01", "orders": 7235}, {"m": "2018-02", "orders": 6655}, {"m": "2018-03", "orders": 7185}, {"m": "2018-04", "orders": 6924}, {"m": "2018-05", "orders": 6849}, {"m": "2018-06", "orders": 6149}, {"m": "2018-07", "orders": 6251}, {"m": "2018-08", "orders": 6428}], "hazard": [{"from_day": 0, "rate_pct": 1.29}, {"from_day": 90, "rate_pct": 0.67}, {"from_day": 180, "rate_pct": 0.71}, {"from_day": 270, "rate_pct": 0.58}, {"from_day": 365, "rate_pct": 0.37}], "targets": {"dormant_all": 21198, "target_6_12m": 14237}, "samecat": {"same": 38.9}, "bycat_high": [{"name": "시계·선물", "pct": 54.3}, {"name": "스포츠·레저", "pct": 52.6}, {"name": "건강·미용", "pct": 50.0}, {"name": "컴퓨터 액세서리", "pct": 49.5}], "bycat_low": [{"name": "생활용품", "pct": 30.0}, {"name": "완구", "pct": 29.7}, {"name": "정원용품", "pct": 26.8}, {"name": "이색 상품", "pct": 19.2}], "target_mix": {"high": 6663, "high_pct": 46.8}};
 const C = { green: "#0b3d2e", teal: "#2a9d8f", red: "#d9534f", gray: "#b4bfbb", dgray: "#7b8f89" };
 const GCOL = { 1: "#7b8f89", 2: "#9aaaa5", 3: "#c3ccc9", 4: "#d9534f", 5: "#e3e8e6" };
 const fmt = n => Math.round(n).toLocaleString("ko-KR");
@@ -200,8 +200,9 @@ document.getElementById("rate").oninput = sim; document.getElementById("cost").o
 const hz = D.hazard;
 bars("hazard", hz.map((h, i) => ({ l: ["0~90일", "91~180일", "181~270일", "271~360일", "361~450일"][i], v: h.rate_pct, c: i === 2 || i === 3 ? C.teal : (i === 4 ? C.dgray : C.gray) })), { max: 1.6, labels: true, labelFmt: v => v.toFixed(2), pl: 12, h: 250, box: [2, 4], axisFmt: v => v });
 document.getElementById("hazNote").textContent = `시간이 지날수록 연락 없이 돌아오는 비율이 낮아짐 (6개월 이후 약 ${Math.min(hz[2].rate_pct, hz[3].rate_pct).toFixed(1)}~${Math.max(hz[2].rate_pct, hz[3].rate_pct).toFixed(1)}%, 12개월 이후 ${hz[4].rate_pct.toFixed(1)}%). 휴면 우수 ${fmt(D.targets.dormant_all)}명 중 아직 돌아올 가능성이 남은 6~12개월 ${fmt(D.targets.target_6_12m)}명을 먼저 연락. 연락 효과가 아니라 연락 없이 돌아오는 정도임`;
-bars("cat", [{ l: "첫 구매와\n같은 상품군", v: D.samecat.same, c: C.teal }, { l: "다른\n상품군", v: 100 - D.samecat.same, c: C.gray }], { max: 75, labels: true, labelFmt: v => v.toFixed(1), w: 240, pl: 8, h: 230, lf: 14, xf: 12 });
-bars("vou", [{ l: "바우처\n사용", v: D.voucher.with, c: C.teal }, { l: "사용\n안 함", v: D.voucher.without, c: C.gray }], { max: 3.6, labels: true, labelFmt: v => v.toFixed(2), w: 240, pl: 8, h: 230, lf: 14, xf: 12 });
+bars("cat", D.bycat_high.map(x => ({ l: x.name.replace("·", "·\n"), v: x.pct, c: C.teal })), { max: 60, labels: true, labelFmt: v => v.toFixed(1), w: 240, pl: 8, h: 230, lf: 12, xf: 9 });
+bars("vou", D.bycat_low.map(x => ({ l: x.name.replace("·", "·\n"), v: x.pct, c: C.gray })), { max: 60, labels: true, labelFmt: v => v.toFixed(1), w: 240, pl: 8, h: 230, lf: 12, xf: 9 });
+document.getElementById("recNote").textContent = `다시 산 고객 1,970명 중 같은 상품군을 다시 산 비율은 평균 ${D.samecat.same.toFixed(1)}%이지만 첫 구매 상품군에 따라 크게 다름. 높은 상품군(45% 이상)을 처음 산 고객에게는 같은 상품군을 추천하고, 연락 대상 ${fmt(D.targets.target_6_12m)}명 중 ${D.target_mix.high_pct.toFixed(0)}%(${fmt(D.target_mix.high)}명)가 해당됨. 낮은 상품군은 추천 시스템 등 별도 방식이 필요함(향후 과제). 상품군별 고객 수가 52~245명으로 적어 참고용이며 연관성일 뿐 효과를 증명한 것은 아님`;
 
 function render() { pie(); sim(); }
 render();
