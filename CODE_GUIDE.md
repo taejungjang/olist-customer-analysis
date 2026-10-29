@@ -33,11 +33,11 @@ Kaggle CSV 8개 (olist_dataset/ 폴더)
 
 | 파일 | 역할 | 입력 | 출력 |
 |---|---|---|---|
-| `analysis/run_analysis.py` | 분석 전체. 1~9단계 (아래 4번) | `olist_dataset/*.csv`, `analysis/sql/*.sql` | `analysis/output/*.csv`, `olist.db` |
+| `analysis/run_analysis.py` | 분석 전체. 1–9단계 (아래 4번) | `olist_dataset/*.csv`, `analysis/sql/*.sql` | `analysis/output/*.csv`, `olist.db` |
 | `analysis/sql/01_base_view.sql` | 분석 대상 주문(배송 완료)만 모은 뷰 `v_orders` 만들기 | orders, customers, order_items | 뷰 `v_orders` (DB 안) |
 | `analysis/sql/02_rfm_groups.sql` | 고객별 R, F, M 계산 -> 점수 -> 5개 그룹 | `v_orders` | `rfm.csv` |
 | `analysis/sql/03_monthly_orders.sql` | 월별 주문 수 | orders | `monthly.csv` |
-| `analysis/sql/04_repurchase_gap.sql` | 재구매 고객의 첫 구매 ~ 두 번째 구매 간격(일) | `v_orders` | `repurchase_gap.csv` |
+| `analysis/sql/04_repurchase_gap.sql` | 재구매 고객의 첫 구매 – 두 번째 구매 간격(일) | `v_orders` | `repurchase_gap.csv` |
 | `analysis/sql/05_order_main_category.sql` | 주문별 대표 상품군 (가장 비싼 상품 기준) | order_items, products | (Python 안에서 사용) |
 | `analysis/build_dashboard.py` | 결과 CSV를 대시보드 HTML에 끼워 넣기 | `output/*.csv`, `dashboard_template.html` | `olist_dashboard.html` |
 | `analysis/dashboard_template.html` | 대시보드 화면 틀 (HTML, CSS, JavaScript). 데이터 자리에 `__DATA__` | | |
@@ -58,7 +58,7 @@ SQL은 "데이터를 모으는 일", Python은 "계산하고 비교하는 일"�
 | 5 | 재구매 고객이 첫 구매 후 며칠 만에 다시 샀나 | 04 | `repurchase_gap.csv` | 7단계, `rfm_criteria_check.py` |
 | 6 | 다시 살 때 같은 상품군을 샀나 (전체, 첫 구매 상품군별) | 05 | `same_category.csv`, `same_by_first_category.csv` | 대시보드, README |
 | 7 | 첫 구매 후 일정 기간 안 산 고객이 그 뒤 90일 안에 연락 없이 다시 산 비율 | | `return_hazard.csv` | 대시보드, README (연락 시점) |
-| 8 | 연락 대상(휴면 우수 중 마지막 구매 6~12개월) 정하고, 상품군 기준으로 분류 | | `targets.csv`, `target_by_same_rate.csv` | 대시보드, README |
+| 8 | 연락 대상(휴면 우수 중 마지막 구매 6–12개월) 정하고, 상품군 기준으로 분류 | | `targets.csv`, `target_by_same_rate.csv` | 대시보드, README |
 | 9 | 그룹별 연락 1명당 기대 매출, 기대 효과 시나리오 (모두 가정) | | `rfm_groups.csv`(열 추가), `scenario.csv` | 대시보드, README |
 
 ## 5. README의 주요 숫자는 어디서 나오나
@@ -69,10 +69,10 @@ SQL은 "데이터를 모으는 일", Python은 "계산하고 비교하는 일"�
 | 177일, R$110 | 최근/휴면 경계, 우수/일반 경계 | `02_rfm_groups.sql` 의 `r_score >= 4`, `m_score >= 4` (5등분 중 상위 40%). 근거는 `rfm_criteria_check.py` |
 | 2.2% | 서로 다른 날 2번 이상 산 고객 | `rfm.csv`의 frequency |
 | 21,198명 / 23% / 43% | 휴면 우수 고객 수, 고객 비중, 매출 비중 | 3단계 `rfm_groups.csv` |
-| 14,237명 | 연락 대상 (휴면 우수 중 마지막 구매 6~12개월) | 8단계 `targets.csv` (`TARGET_MAX_RECENCY_DAYS = 382`) |
-| 0.6~0.7%, 0.37% | 연락 없이 90일 안에 돌아오는 비율 | 7단계 `return_hazard.csv` |
+| 14,237명 | 연락 대상 (휴면 우수 중 마지막 구매 6–12개월) | 8단계 `targets.csv` (`TARGET_MAX_RECENCY_DAYS = 382`) |
+| 0.6–0.7%, 0.37% | 연락 없이 90일 안에 돌아오는 비율 | 7단계 `return_hazard.csv` |
 | R$268 x 3% = R$8.0 | 연락 1명당 기대 매출 | 9단계 `rfm_groups.csv` (`ASSUMED_REPURCHASE_RATE = 0.03`는 가정) |
-| 38.9%, 상품군별 19~54% | 다시 산 고객이 같은 상품군을 산 비율 | 6단계 `same_category.csv`, `same_by_first_category.csv` |
+| 38.9%, 상품군별 19–54% | 다시 산 고객이 같은 상품군을 산 비율 | 6단계 `same_category.csv`, `same_by_first_category.csv` |
 | 47% (6,663명) | 연락 대상 중 같은 상품군 추천이 유리한 상품군을 처음 산 고객 | 8단계 `target_by_same_rate.csv` |
 
 ## 6. SQL 파일을 읽는 순서 (쉬운 것부터)
