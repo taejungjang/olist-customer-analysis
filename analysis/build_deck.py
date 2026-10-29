@@ -171,7 +171,7 @@ rows = [["표", "한 줄이 뜻하는 것", "건수", "주요 항목"],
         ["리뷰", "고객이 남긴 평점", f"{sizes.order_reviews:,}", "평점 1~5점"], ["상품", "판매 상품 정보", f"{sizes.products:,}", "상품군"]]
 table(s, 0.5, 1.9, [1.2, 2.9, 1.0, 3.9], rows, "table-data", size=10, rowh=0.37, align_right=(2,))
 text(s, 0.5, 4.6, 9.0, 0.6, [[("주의  ", {"bold": True, "color": RED}), (f"주문할 때마다 고객 번호가 새로 생겨서, 같은 사람은 '고객 구분 번호'로 묶음 ({sizes.customers:,}건 → {persons:,}명)", {})],
-                             [("분석 대상  ", {"bold": True, "color": GREEN}), (f"취소를 뺀 배송 완료 주문 96,470건, 고객 {N:,}명", {})]], size=10.5, gap=3)
+                             [("분석 대상  ", {"bold": True, "color": GREEN}), (f"배송 완료 주문 96,470건, 고객 {N:,}명 ({persons:,}명 중 취소·배송 중 등으로 배송 완료 주문이 없는 {persons - N:,}명 제외)", {})]], size=10.5, gap=3)
 s.notes_slide.notes_text_frame.text = "표 8개 중 6개 사용(판매자, 우편번호 좌표 표는 제외). Kaggle 공개 데이터. 고객은 customer_unique_id 기준."
 
 # ============================================================ 4. RFM 방법
@@ -196,7 +196,7 @@ cats = [f"{k} {g.name[k]}" for k in g.index]; pc = [DGRAY, "9AAAA5", "C3CCC9", R
 pie(s, 0.4, 1.3, 4.5, 3.0, cats, g.cust_share, pc, "고객 구성 (%)", "chart-pie-customers")
 pie(s, 5.0, 1.3, 4.6, 3.0, cats, g.sales_share, pc, "매출 구성 (%)", "chart-pie-sales")
 text(s, 0.7, 4.47, 8.6, 0.72, [[("휴면 우수 고객 ", {"bold": True, "color": RED}), (f"{n4:,}명: 고객의 {g.cust_share[4]:.0f}%, 매출의 {g.sales_share[4]:.0f}%, 평균 {int(g.avg_days[4])}일째 구매 없음", {})],
-                              [("불만 때문은 아님: ", {"bold": True, "color": RED}), (f"첫 구매 평점 {cmp_.review[4]:.2f}점 (최근 우수 {cmp_.review[2]:.2f}점), 늦은 주문 {cmp_.late_pct[4]:.0f}% (최근 우수 {cmp_.late_pct[2]:.0f}%)", {})]], size=11.5, gap=4, bullets=True)
+                              [("첫 구매 경험: ", {"bold": True, "color": RED}), (f"평점 {cmp_.review[4]:.2f}점 (최근 우수 {cmp_.review[2]:.2f}점), 늦은 주문 {cmp_.late_pct[4]:.0f}% ({cmp_.late_pct[2]:.0f}%). 평점만으로 이탈 원인은 단정할 수 없음", {})]], size=11.5, gap=4, bullets=True)
 outline(s, 0.5, 4.4, 9.0, 0.82, "highlight-callout")
 s.notes_slide.notes_text_frame.text = f"고객 {N:,}명(배송 완료 주문 기준). 평점과 늦은 주문 비율은 두 그룹 고객의 주문 전체 기준 비교."
 
@@ -243,7 +243,7 @@ s.notes_slide.notes_text_frame.text = f"평균 구매금액 R${avg4}(1회 재구
 # ============================================================ 9. 결론
 s = prs.slides.add_slide(blank)
 frame(s, 9, "정리", "결론, 한계, 더 나아갈 점")
-blocks = [("결론", GREEN, [f"매출의 {g.sales_share[4]:.0f}%가 6개월 넘게 안 산 우수 고객, 불만 때문은 아님", "집중 순서: 휴면 우수, 최근 우수", "일반 그룹은 연락 비용이 크면 손해라 투자하지 않음", "휴면 우수는 6~12개월부터 같은 상품군 추천 + 바우처"]),
+blocks = [("결론", GREEN, [f"매출의 {g.sales_share[4]:.0f}%가 6개월 넘게 안 산 우수 고객 (이탈 원인은 데이터로 확인 불가)", "집중 순서: 휴면 우수, 최근 우수", "일반 그룹은 연락 비용이 크면 손해라 투자하지 않음", "휴면 우수는 6~12개월부터 같은 상품군 추천 + 바우처"]),
           ("한계", RED, ["2년치 자료, 떠난 이유는 데이터에 없음", "연락 효과(3%)는 가정, 순위는 변하지 않음", "상품군, 바우처 결과는 연관성이지 효과가 아님", "우수 기준(R$110)은 직접 정한 값"]),
           ("더 나아갈 점", TEAL, ["A/B 테스트로 실제 효과 측정", "연락 비용 대비 이익 계산", "설문 등으로 떠난 이유 확인"])]
 for i, (h, c, items) in enumerate(blocks):
